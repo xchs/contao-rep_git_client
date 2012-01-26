@@ -3,12 +3,5 @@
 
 $GLOBALS['BE_MOD']['system']['rep_git_client'] = array
 (
-    'tables'       => array('tl_rep_git_client','tl_rep_git_client_projects','tl_rep_git_client_restore'),
-);
-
-
-$GLOBALS['REPGIT_PROVIDER'] = array(
-	'github' => "http://www.github.com",
-	'bitbucket' => "http://www.bitbucket.com",
-	
+    'tables'       => array('tl_rep_git_client','tl_rep_git_client_projects','tl_git_client_restore'),
 );
