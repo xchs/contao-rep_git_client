@@ -51,11 +51,6 @@
 									'href' => 'table=tl_rep_git_client_projects',
 									'icon' => 'header.gif',
 							),
-							'copy' => array(
-									'label' => &$GLOBALS['TL_LANG']['tl_rep_git_client']['copy'],
-									'href' => 'act=copy',
-									'icon' => 'copy.gif',
-							),
 							'delete' => array(
 									'label' => &$GLOBALS['TL_LANG']['tl_rep_git_client']['delete'],
 									'href' => 'act=delete',
@@ -91,7 +86,8 @@
 							'label' => &$GLOBALS['TL_LANG']['tl_rep_git_client']['repRepository'],
 							'exclude' => true,
 							'inputType' => 'select',
-							'options_callback' => array('tl_rep_git_client','getUserRepos')
+							'options_callback' => array('tl_rep_git_client','getUserRepos'),
+							'eval' => array('mandatory' => true),
 					),
 			)
 	);
@@ -101,22 +97,21 @@
 		
 		public  function __construct()
 		{
-			include (TL_ROOT."/plugins/Github/ApiInterface.php");
-			include (TL_ROOT."/plugins/Github/Api.php");
-			include (TL_ROOT."/plugins/Github/Api/Repo.php");
-			include (TL_ROOT."/plugins/Github/Api/Object.php");
-			include (TL_ROOT."/plugins/Github/Autoloader.php");
-			include (TL_ROOT."/plugins/Github/Client.php");
-			include (TL_ROOT."/plugins/Github/HttpClientInterface.php");
-			include (TL_ROOT."/plugins/Github/HttpClient.php");
-			include (TL_ROOT."/plugins/Github/HttpClient/Curl.php");
-			include (TL_ROOT."/plugins/Github/HttpClient/Exception.php");
+			include (TL_ROOT."/plugins/github/ApiInterface.php");
+			include (TL_ROOT."/plugins/github/Api.php");
+			include (TL_ROOT."/plugins/github/Api/Repo.php");
+			include (TL_ROOT."/plugins/github/Api/Object.php");
+			include (TL_ROOT."/plugins/github/Autoloader.php");
+			include (TL_ROOT."/plugins/github/Client.php");
+			include (TL_ROOT."/plugins/github/HttpClientInterface.php");
+			include (TL_ROOT."/plugins/github/HttpClient.php");
+			include (TL_ROOT."/plugins/github/HttpClient/Curl.php");
+			include (TL_ROOT."/plugins/github/HttpClient/Exception.php");
 			
 			
 			// Do not use this autoloader. Will not works with Contao autoloader
 			//Github_Autoloader::register();
 			$this->objGithub = new Github_Client();
-			
 			$this->import("Database");
 		}
 	
@@ -160,6 +155,7 @@
 		{
 			if ( $dc->activeRecord->repRepository)
 			{
+				$arrTags = $this->objGithub->getRepoApi()->getRepoTags($dc->activeRecord->repUser, $dc->activeRecord->repRepository);
 				$arrBranches = $this->objGithub->getRepoApi()->getRepoBranches($dc->activeRecord->repUser, $dc->activeRecord->repRepository);
 				$arrRepos = $this->objGithub->getRepoApi()->getUserRepos($dc->activeRecord->repUser);
 				
@@ -172,25 +168,51 @@
 					}
 				}
 				
-				foreach ($arrBranches as $key=>$value)
+				if ((is_array($arrBranches)) && (count($arrBranches)>0))
 				{
-					$tree = $this->objGithub->getObjectApi()->showTree($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
-					$blobs = $this->objGithub->getObjectApi()->listBlobs($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
+					foreach ($arrBranches as $key=>$value)
+					{
+						$tree = $this->objGithub->getObjectApi()->showTree($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
+						$blobs = $this->objGithub->getObjectApi()->listBlobs($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
+					
+					
+						$objBranch = new libContaoConnector("tl_rep_git_client_projects","repHash",$value);
+						$objBranch->pid=$dc->id;
+						$objBranch->repUrl = $arrMyRepo['url'];
+						$objBranch->repPushed = $arrMyRepo['pushed_at'];
+						$objBranch->repBranch = $key;
+						$objBranch->repHash = $value;
+						$objBranch->allFiles = $blobs;
+						$objBranch->ignoredFiles = array();
+						$objBranch->repType = 'BRANCH';
+						
+						$objBranch->Sync();
+						
+					}
+				}
 				
 				
-					$objBranch = new libContaoConnector("tl_rep_git_client_projects","repHash",$value);
-					$objBranch->pid=$dc->id;
-					$objBranch->repUrl = $arrMyRepo['url'];
-					$objBranch->repPushed = $arrMyRepo['pushed_at'];
-					$objBranch->repBranch = $key;
-					$objBranch->repHash = $value;
-					$objBranch->repRepository = $dc->activeRecord->repRepository;
-					$objBranch->repUser = $dc->activeRecord->repUser;
-					$objBranch->allFiles = $blobs;
-					$objBranch->ignoredFiles = array();
+				if ((is_array($arrTags)) && (count($arrTags)>0))
+				{
+					foreach ($arrTags as $key=>$value)
+					{
+						$tree = $this->objGithub->getObjectApi()->showTree($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
+						$blobs = $this->objGithub->getObjectApi()->listBlobs($dc->activeRecord->repUser, $dc->activeRecord->repRepository, $value);
 					
-					$objBranch->Sync();
 					
+						$objBranch = new libContaoConnector("tl_rep_git_client_projects","repHash",$value);
+						$objBranch->pid=$dc->id;
+						$objBranch->repUrl = $arrMyRepo['url'];
+						$objBranch->repPushed = $arrMyRepo['pushed_at'];
+						$objBranch->repBranch = $key;
+						$objBranch->repHash = $value;
+						$objBranch->allFiles = $blobs;
+						$objBranch->ignoredFiles = array();
+						$objBranch->repType = 'TAGS';
+						
+						$objBranch->Sync();
+						
+					}
 				}
 			}
 		}

@@ -3,5 +3,5 @@
 
 $GLOBALS['BE_MOD']['system']['rep_git_client'] = array
 (
-    'tables'       => array('tl_rep_git_client','tl_rep_git_client_projects','tl_git_client_restore'),
+    'tables'       => array('tl_rep_git_client','tl_rep_git_client_projects','tl_rep_git_client_restore'),
 );
