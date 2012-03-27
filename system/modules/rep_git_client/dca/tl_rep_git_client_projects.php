@@ -121,16 +121,16 @@ class tl_rep_git_client_projects extends Backend
 
 	public function __construct()
 	{
-		include (TL_ROOT . "/plugins/Github/ApiInterface.php");
-		include (TL_ROOT . "/plugins/Github/Api.php");
-		include (TL_ROOT . "/plugins/Github/Api/Repo.php");
-		include (TL_ROOT . "/plugins/Github/Api/Object.php");
-		include (TL_ROOT . "/plugins/Github/Autoloader.php");
-		include (TL_ROOT . "/plugins/Github/Client.php");
-		include (TL_ROOT . "/plugins/Github/HttpClientInterface.php");
-		include (TL_ROOT . "/plugins/Github/HttpClient.php");
-		include (TL_ROOT . "/plugins/Github/HttpClient/Curl.php");
-		include (TL_ROOT . "/plugins/Github/HttpClient/Exception.php");
+		include (TL_ROOT . "/plugins/github/ApiInterface.php");
+		include (TL_ROOT . "/plugins/github/Api.php");
+		include (TL_ROOT . "/plugins/github/Api/Repo.php");
+		include (TL_ROOT . "/plugins/github/Api/Object.php");
+		include (TL_ROOT . "/plugins/github/Autoloader.php");
+		include (TL_ROOT . "/plugins/github/Client.php");
+		include (TL_ROOT . "/plugins/github/HttpClientInterface.php");
+		include (TL_ROOT . "/plugins/github/HttpClient.php");
+		include (TL_ROOT . "/plugins/github/HttpClient/Curl.php");
+		include (TL_ROOT . "/plugins/github/HttpClient/Exception.php");
 
 		// Do not use this autoloader. Will not works with Contao autoloader
 		//Github_Autoloader::register();
