@@ -1,3 +1,18 @@
+-- ********************************************************
+-- *                                                      *
+-- * IMPORTANT NOTE                                       *
+-- *                                                      *
+-- * Do not import this file manually but use the Contao  *
+-- * install tool to create and maintain database tables! *
+-- *                                                      *
+-- ********************************************************
+
+
+-- --------------------------------------------------------
+
+--
+-- Table `tl_rep_git_client`
+--
 
 CREATE TABLE `tl_rep_git_client` (
   `id` int(10) unsigned NOT NULL auto_increment,
@@ -10,6 +25,12 @@ CREATE TABLE `tl_rep_git_client` (
   KEY `pid` (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+-- --------------------------------------------------------
+
+--
+-- Table `tl_rep_git_client_projects`
+--
 
 CREATE TABLE `tl_rep_git_client_projects` (
   `id` int(10) unsigned NOT NULL auto_increment,
